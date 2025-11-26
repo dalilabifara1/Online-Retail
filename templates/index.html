@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Studio della sensibilità al prezzo e analisi stagionale delle vendite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .dropdown {
+            flex: 1 1 250px;
+        }
+        label {
+            margin-right: 8px;
+            font-weight: 500;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .download-btn {
+            text-decoration: none;
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .download-btn:hover {
+            background-color: #1f8a4b;
+        }
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+        .card.active {
+            display: block;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            font-size: 14px;
+        }
+        th {
+            background-color: #eee;
+        }
+        footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            padding: 20px;
+            background-color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Studio della sensibilità al prezzo e analisi stagionale delle vendite</h1>
+    </header>
+
+    <div class="content">
+
+        <!-- Barra superiore: menu a tendina + download Excel -->
+        <div class="top-bar">
+            <div class="dropdown">
+                <label for="view-select">Scegli cosa visualizzare:</label>
+                <select id="view-select" onchange="changeView()">
+                    <option value="settimanali">Vendite Settimanali</option>
+                    <option value="mensili">Vendite Mensili</option>
+                    <option value="top-prodotti">Top Prodotti Mensili</option>
+                    <option value="correlazioni">Correlazione Prodotti</option>
+                    <option value="elasticita">Elasticità Domanda</option>
+                </select>
+            </div>
+
+            <!-- Bottone per scaricare l'Excel -->
+            <a class="download-btn"
+               href="{{ url_for('static', filename='Analisi_Online_Retail.xlsx') }}"
+               download>
+                Scarica file Excel dell'analisi
+            </a>
+        </div>
+
+        <div id="settimanali" class="card active">
+            <h2>Vendite Settimanali</h2>
+            <img src="{{ url_for('static', filename='grafico_vendite_settimanali.png') }}" alt="Vendite Settimanali">
+        </div>
+
+        <div id="mensili" class="card">
+            <h2>Vendite Mensili</h2>
+            <img src="{{ url_for('static', filename='grafico_vendite_mensili.png') }}" alt="Vendite Mensili">
+        </div>
+
+        <div id="top-prodotti" class="card">
+            <h2>Vendite Mensili per Top Prodotti</h2>
+            <img src="{{ url_for('static', filename='grafico_top_prodotti_mensili.png') }}" alt="Top Prodotti">
+        </div>
+
+        <div id="correlazioni" class="card">
+            <h2>Correlazioni tra Prodotti (Heatmap)</h2>
+            <img src="{{ url_for('static', filename='heatmap_correlazioni_prodotti.png') }}" alt="Correlazioni Prodotti">
+        </div>
+
+        <div id="elasticita" class="card">
+            <h2>Elasticità della Domanda (Top 10 per variabilità prezzo)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>StockCode</th>
+                        <th>Elasticità media</th>
+                        <th>Valutazione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in stats.elasticity %}
+                    <tr>
+                        <td>{{ row.StockCode }}</td>
+                        <td>
+                            {% if row.Elasticita_media is not none %}
+                                {{ "%.2f"|format(row.Elasticita_media) }}
+                            {% else %}
+                                n.d.
+                            {% endif %}
+                        </td>
+                        <td>{{ row.Valutazione }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <strong>Team:</strong><br>
+        Autunno Marco - 5408516 | Bifara Dalila - 5408971 | Rosa Francesca Maria - 5406175<br>
+        Scarfò Emanuela - 5411602 | Signaroldi Chiara - 5410571 | Tricella Marco - 5406480 | Volpe Nicole - 5411336
+    </footer>
+
+    <script>
+        function changeView() {
+            const selected = document.getElementById("view-select").value;
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => card.classList.remove("active"));
+            document.getElementById(selected).classList.add("active");
+        }
+    </script>
+</body>
+</html>
