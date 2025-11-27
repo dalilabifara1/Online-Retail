@@ -126,6 +126,7 @@ plt.title(title_top if title_top else "Vendite mensili per top prodotti")
 plt.ylabel("Totale vendite")
 plt.ylim(0, 25000)
 plt.tight_layout()
+plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0.)
 plt.show()
 
 
@@ -286,8 +287,8 @@ pivot.plot(ax=ax3)
 ax3.set_title(title_top if title_top else "Vendite mensili per top prodotti")
 ax3.set_ylabel("Totale vendite")
 ax3.set_ylim(0, 25000)
-fig3.tight_layout()
-fig3.savefig("grafico_top_prodotti_mensili.png", dpi=150)
+ax3.legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0.)
+fig3.savefig("grafico_top_prodotti_mensili.png", dpi=150, bbox_inches='tight')
 
 # Heatmap correlazioni top 20 prodotti
 fig4, ax4 = plt.subplots(figsize=(8, 6))
